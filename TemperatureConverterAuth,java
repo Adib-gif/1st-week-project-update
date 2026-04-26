@@ -1,0 +1,161 @@
+import java.util.*;
+import java.io.*;
+
+public class TempConverterAuth {
+
+    static Scanner sc = new Scanner(System.in);
+    static final String FILE_NAME = "users.txt";
+
+    public static void main(String[] args) {
+        while (true) {
+            System.out.println("\n=== Welcome ===");
+            System.out.println("1. Register");
+            System.out.println("2. Login");
+            System.out.println("3. Exit");
+            System.out.print("Choose: ");
+
+            int choice = sc.nextInt();
+            sc.nextLine(); 
+
+            switch (choice) {
+                case 1:
+                    register();
+                    break;
+                case 2:
+                    if (login()) {
+                        temperatureMenu();
+                    }
+                    break;
+                case 3:
+                    System.out.println("Goodbye!");
+                    return;
+                default:
+                    System.out.println("Invalid choice!");
+            }
+        }
+    }
+    public static void register() {
+        try {
+            System.out.print("Enter username: ");
+            String username = sc.nextLine();
+
+            if (userExists(username)) {
+                System.out.println("Username already exists!");
+                return;
+            }
+
+            System.out.print("Enter password: ");
+            String password = sc.nextLine();
+
+            FileWriter fw = new FileWriter(FILE_NAME, true);
+            fw.write(username + "," + password + "\n");
+            fw.close();
+
+            System.out.println("Registration successful!");
+
+        } catch (IOException e) {
+            System.out.println("Error writing file!");
+        }
+    }
+    public static boolean login() {
+        try {
+            System.out.print("Enter username: ");
+            String username = sc.nextLine();
+
+            System.out.print("Enter password: ");
+            String password = sc.nextLine();
+
+            BufferedReader br = new BufferedReader(new FileReader(FILE_NAME));
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data[0].equals(username) && data[1].equals(password)) {
+                    System.out.println("Login successful!");
+                    br.close();
+                    return true;
+                }
+            }
+
+            br.close();
+            System.out.println("Invalid credentials!");
+        } catch (IOException e) {
+            System.out.println("Error reading file!");
+        }
+        return false;
+    }
+
+    
+    public static boolean userExists(String username) {
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(FILE_NAME));
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data[0].equals(username)) {
+                    br.close();
+                    return true;
+                }
+            }
+
+            br.close();
+        } catch (IOException e) {
+            
+        }
+        return false;
+    }
+
+    public static void temperatureMenu() {
+        while (true) {
+            System.out.println("\n=== Temperature Converter ===");
+            System.out.println("1. Celsius to Fahrenheit");
+            System.out.println("2. Fahrenheit to Celsius");
+            System.out.println("3. Celsius to Kelvin");
+            System.out.println("4. Kelvin to Celsius");
+            System.out.println("5. Logout");
+            System.out.print("Choose: ");
+
+            int choice = sc.nextInt();
+
+            double temp, result;
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter Celsius: ");
+                    temp = sc.nextDouble();
+                    result = (temp * 9/5) + 32;
+                    System.out.println("Fahrenheit: " + result);
+                    break;
+
+                case 2:
+                    System.out.print("Enter Fahrenheit: ");
+                    temp = sc.nextDouble();
+                    result = (temp - 32) * 5/9;
+                    System.out.println("Celsius: " + result);
+                    break;
+
+                case 3:
+                    System.out.print("Enter Celsius: ");
+                    temp = sc.nextDouble();
+                    result = temp + 273.15;
+                    System.out.println("Kelvin: " + result);
+                    break;
+
+                case 4:
+                    System.out.print("Enter Kelvin: ");
+                    temp = sc.nextDouble();
+                    result = temp - 273.15;
+                    System.out.println("Celsius: " + result);
+                    break;
+
+                case 5:
+                    System.out.println("Logged out!");
+                    return;
+
+                default:
+                    System.out.println("Invalid choice!");
+            }
+        }
+    }
+}
